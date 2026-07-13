@@ -1,0 +1,31 @@
+---
+title: "test_import_data"
+author: "Tim"
+date: "Last compiled on `r format(Sys.time(), '%d %B, %Y')`"
+output: html_document
+params:
+  data_folder: "C:/Users/frayling/Université de Genève/BioHUG-Sample_processing - 2026/7. July_2026"
+  BioHUG_patientdatabase_folder: "Z:/BioHUG/BioHUG_samples/BioHUG_patientdatabase"
+  BioHUG_DNAdatabase_folder: "Z:/BioHUG/BioHUG_samples/BioHUG_DNAdatabase"
+  biobank_data_folder: "project_data"
+
+
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+# render from TF's CMU laptop
+rmarkdown::render("test_import_data.Rmd", 
+                  output_file = paste0("C:/Users/frayling/OneDrive - Université de Genève/Data/R_projects_scripts/BioHUG/", Sys.Date(), "_BioHUG_update"),
+                  params = list(
+  current_month_folder = "C:/Users/frayling/Université de Genève/BioHUG-Sample_processing - 2026/7. July_2026", #Tim use from CMU
+  next_date = "20260709",
+  write_files = TRUE
+                  )
+                  )
+```
+
