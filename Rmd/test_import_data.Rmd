@@ -24,7 +24,9 @@ install.packages("tidyverse")
 #install.packages("rmarkdown")
 #install.packages("yaml")
 #install.packages("ggplot2")
-
+#install.packages("renv")
+#renv::init()
+renv::snapshot()
 
 library(dplyr)
 library(data.table)
