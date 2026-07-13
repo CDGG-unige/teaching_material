@@ -4,7 +4,8 @@ author: "Tim"
 date: "Last compiled on `r format(Sys.time(), '%d %B, %Y')`"
 output: html_document
 params:
-  data_folder: "C:/Users/frayling/Université de Genève/BioHUG-Sample_processing - 2026/7. July_2026"
+  data_folder: "C:/Users/frayling/OneDrive - Université de Genève/Teaching_Geneva/Msc_Biomedical/Human_genomics_module_2026_2027/Dummydata_codebook"
+  data_file: "synthetic_gwas_teaching_dataset.csv"
   BioHUG_patientdatabase_folder: "Z:/BioHUG/BioHUG_samples/BioHUG_patientdatabase"
   BioHUG_DNAdatabase_folder: "Z:/BioHUG/BioHUG_samples/BioHUG_DNAdatabase"
   biobank_data_folder: "project_data"
@@ -15,6 +16,23 @@ params:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+#install and load libraries
+install.packages("dplyr")
+install.packages("data.table")
+install.packages("tidyverse")
+#install.packages("knitr")
+#install.packages("rmarkdown")
+#install.packages("yaml")
+#install.packages("ggplot2")
+
+
+library(dplyr)
+library(data.table)
+library(tidyverse)
+library(knitr)
+library(yaml)
+library(ggplot2)
+
 ```
 
 ```{r}
@@ -27,5 +45,13 @@ rmarkdown::render("test_import_data.Rmd",
   write_files = TRUE
                   )
                   )
+```
+
+#import data
+
+```{r}
+mytestdata <- read.csv("C:/Users/frayling/OneDrive - Université de Genève/Teaching_Geneva/Msc_Biomedical/Human_genomics_module_2026_2027/Dummydata_codebook/synthetic_gwas_teaching_dataset.csv")
+mydataname <- paste0(params$data_folder,"/",params$data_file)
+testdata <- read.csv(mydataname)
 ```
 
