@@ -55,7 +55,12 @@ rmarkdown::render("test_import_data.Rmd",
 mytestdata <- read.csv("C:/Users/frayling/OneDrive - Université de Genève/Teaching_Geneva/Msc_Biomedical/Human_genomics_module_2026_2027/Dummydata_codebook/synthetic_gwas_teaching_dataset.csv")
 mydataname <- paste0(params$data_folder,"/",params$data_file)
 testdata <- read.csv(mydataname)
-#note , once set up in Renko, split the data file up into genotypes and phenotypes to send message that the two are not stored linked
+
+phenotypes <- testdata %>% select(1:18)
+genotypes <- testdata %>% select(c(1,19:30))
+
+write_csv(phenotypes, file = file.path(params$data_folder, paste0("phenotypes",".csv"))) 
+write_csv(genotypes, file = file.path(params$data_folder, paste0("genotypes",".csv"))) 
 
 
 ```
