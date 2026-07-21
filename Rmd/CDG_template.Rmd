@@ -40,7 +40,7 @@ myplot <- ggplot(phenotypes_df, aes(x = bmi_kg_m2)) +
   theme_minimal()
 
 #you will need to change the "common-disease-genomics-data" part of the path to your data directory.
-ggsave("../../common-disease-genomics-data/BMI_histogram.png", plot = myplot, width = 8, height = 6, dpi = 300)
+ggsave("../../test-data/BMI_histogram.png", plot = myplot, width = 8, height = 6, dpi = 300)
 
 ```
 
