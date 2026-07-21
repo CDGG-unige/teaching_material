@@ -33,12 +33,13 @@ library(ggplot2)
 #import phenotypes data into an R object dataframe
 phenotypes_df <- read.csv("../../common-disease-genomics-data/phenotypes.csv")
 
-#make a plot 
+#make a plot and add it to your R environment as an object called "myplot"
 myplot <- ggplot(phenotypes_df, aes(x = bmi_kg_m2)) +
   geom_histogram(binwidth = 2, fill = "steelblue", color = "white") +
   labs(title = "Histogram of BMI", x = "BMI", y = "Count") +
   theme_minimal()
 
+#you will need to change the "common-disease-genomics-data" part of the path to your data directory.
 ggsave("../../common-disease-genomics-data/BMI_histogram.png", plot = myplot, width = 8, height = 6, dpi = 300)
 
 ```
