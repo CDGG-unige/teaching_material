@@ -1,0 +1,39 @@
+---
+title: "CDG_template"
+output: html_document
+date: "2026-07-21"
+---
+
+#first install and load my dependencies, these are the additional code libraries that help we run functions and code in R.
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+#install and load libraries
+install.packages("dplyr")
+install.packages("data.table")
+install.packages("tidyverse")
+#install.packages("knitr")
+#install.packages("rmarkdown")
+#install.packages("yaml")
+#install.packages("ggplot2")
+#install.packages("renv")
+#renv::init()
+renv::snapshot()
+
+library(dplyr)
+library(data.table)
+library(tidyverse)
+library(knitr)
+library(yaml)
+library(ggplot2)
+```
+
+
+#my code chunk to import and subset data 
+```{r}
+
+```
+
+
+
+
+
