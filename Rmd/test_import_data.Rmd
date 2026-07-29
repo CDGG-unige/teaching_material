@@ -60,6 +60,7 @@ write_csv(phenotypes, file = file.path(params$data_folder, paste0("phenotypes","
 write_csv(genotypes, file = file.path(params$data_folder, paste0("genotypes",".csv"))) 
 
 
+
 ```
 
 #import GWAS summary stats data and subset by chromosome
