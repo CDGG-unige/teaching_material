@@ -4,7 +4,7 @@ author: "Tim"
 date: "Last compiled on `r format(Sys.time(), '%d %B, %Y')`"
 output: html_document
 params:
-  output_folder: "Z:/CDGG/data_external/GWAS_catalog/CAD/"
+  output_folder: "Z:/CDGG/data_external/GWAS_catalog/cancer/23143594-GCST005527-EFO_0000676-Build37.f.tsv/23143594-GCST005527-EFO_0000676-Build37.f.tsv"
   data_file: "synthetic_gwas_teaching_dataset.csv"
   BioHUG_patientdatabase_folder: "Z:/BioHUG/BioHUG_samples/BioHUG_patientdatabase"
   BioHUG_DNAdatabase_folder: "Z:/BioHUG/BioHUG_samples/BioHUG_DNAdatabase"
@@ -67,13 +67,32 @@ write_csv(genotypes, file = file.path(params$data_folder, paste0("genotypes",".c
 
 #import GWAS summary stats data and subset by chromosome
 ```{r}
+#CAD
 GWAS_CAD_df <- fread("Z:/CDGG/data_external/GWAS_catalog/CAD/cad.add.160614.website.txt")
+#select and rename only the critical columns before splitting
+GWAS_CAD_df <- GWAS_CAD_df %>% select(c(1:7,9:11)) %>% rename(rsid = "markername", chromosome = "chr", base_pair_location = "bp_hg19", effect_allele = "effect_allele", other_allele = "noneffect_allele", effect_allele_frequency = "effect_allele_freq", standard_error = "se_dgc", p_value = "p_dgc", info = "median_info")  
+
+
 
 #from Claude:
 for (i in c(1:22)) {
   chr_df <- GWAS_CAD_df[GWAS_CAD_df$chr == i, ]
-  fwrite(chr_df, file = file.path(params$output_folder, paste0("chr", i, ".csv")), row.names = FALSE)
+  fwrite(chr_df, file = file.path(params$output_folder, paste0("chr","_CAD", i, ".csv")), row.names = FALSE)
 }
+
+#Breast cancer
+GWAS_BRCA_df <- fread("Z:/CDGG/data_external/GWAS_catalog/cancer/GCST010098.h.tsv/GCST010098.h.tsv")
+#select only the critical columns before splitting
+GWAS_BRCA_df <- GWAS_BRCA_df %>% select(1:12)
+#from Claude to split and write out
+for (i in c(1:22)) {
+  chr_df <- GWAS_BRCA_df[GWAS_BRCA_df$chr == i, ]
+  fwrite(chr_df, file = file.path(params$output_folder, paste0("chr","_BRCA", i, ".csv")), row.names = FALSE)
+}
+
+#only 161k variants for some reason.....
+#Psoriasis
+GWAS_psoriasis_df <- fread("Z:/CDGG/data_external/GWAS_catalog/Psoriasis/23143594-GCST005527-EFO_0000676-Build37.f.tsv/23143594-GCST005527-EFO_0000676-Build37.f.tsv")
 
 
 ```
