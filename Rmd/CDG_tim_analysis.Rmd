@@ -44,14 +44,22 @@ ggsave("../../test-data/BMI_histogram.png", plot = myplot, width = 8, height = 6
 
 ```
 
+
 #code chunks here to describe synthetic data
 ```{r}
+#import genotypes data into an R object dataframe
+genotypes_df <- read.csv("../../common-disease-genomics-data/genotypes.csv")
+
 
 ```
 
 
 #code chunk to import GWAS summary stats and investigate specific chromosomes
 ```{r}
+#import real GWAS data from my INDICATION and the chromosome that contains the gene that encodes the TARGET protein
+CAD_chr9_df <- read.csv("../../common-disease-genomics-data/GWAS_coronary_artery_disease/chr_CAD9.csv")
+#is the SNP used in the synthetic data present in the real GWAS data ?
+CAD_chr9_mySNP_df <- CAD_chr9_df %>% filter(rsid == "rs10757278")
 
 ```
 
