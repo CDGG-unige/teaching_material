@@ -4,7 +4,7 @@ author: "Tim"
 date: "Last compiled on `r format(Sys.time(), '%d %B, %Y')`"
 output: html_document
 params:
-  output_folder: "Z:/CDGG/data_external/GWAS_catalog/cancer/23143594-GCST005527-EFO_0000676-Build37.f.tsv/23143594-GCST005527-EFO_0000676-Build37.f.tsv"
+  output_folder: "Z:/CDGG/data_external/GWAS_catalog/cancer/GCST90255675.h.tsv"
   data_file: "synthetic_gwas_teaching_dataset.csv"
   BioHUG_patientdatabase_folder: "Z:/BioHUG/BioHUG_samples/BioHUG_patientdatabase"
   BioHUG_DNAdatabase_folder: "Z:/BioHUG/BioHUG_samples/BioHUG_DNAdatabase"
@@ -89,6 +89,20 @@ for (i in c(1:22)) {
   chr_df <- GWAS_BRCA_df[GWAS_BRCA_df$chr == i, ]
   fwrite(chr_df, file = file.path(params$output_folder, paste0("chr","_BRCA", i, ".csv")), row.names = FALSE)
 }
+
+#CoRe cancer Fernandez Real
+GWAS_CORECCAN_df <- fread("Z:/CDGG/data_external/GWAS_catalog/cancer/GCST90255675.h.tsv/GCST90255675.h.tsv")
+GWAS_CORECCAN_df <- GWAS_CORECCAN_df %>% select(c(1:8,13)) 
+
+#from Claude to split and write out
+for (i in c(1:22)) {
+  chr_df <- GWAS_CORECCAN_df[GWAS_CORECCAN_df$chr == i, ]
+  fwrite(chr_df, file = file.path(params$output_folder, paste0("chr","_CORECCAN", i, ".csv")), row.names = FALSE)
+}
+
+
+
+
 
 #only 161k variants for some reason.....
 #Psoriasis
