@@ -11,6 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 install.packages("dplyr")
 install.packages("data.table")
 install.packages("tidyverse")
+install.packages("ggforestplot")
 #install.packages("knitr")
 #install.packages("rmarkdown")
 #install.packages("yaml")
@@ -58,9 +59,31 @@ genotypes_df <- read.csv("../../common-disease-genomics-data/genotypes.csv")
 ```{r}
 #import real GWAS data from my INDICATION and the chromosome that contains the gene that encodes the TARGET protein
 CAD_chr9_df <- read.csv("../../common-disease-genomics-data/GWAS_coronary_artery_disease/chr_CAD9.csv")
+
 #is the SNP used in the synthetic data present in the real GWAS data ?
 CAD_chr9_mySNP_df <- CAD_chr9_df %>% filter(rsid == "rs10757278")
 
+#filter on all variants in the gene and 100 kilo base pairs either side
+#HERE HERE
+#CAD_chr9_mygene_df <- CAD_chr9_df %>% filter(base_pair_location < )
+#chr9:21,967,752-21,974,857
+
+
+
+
+#now lets plot the effect of the key variant on the INDICATION, including the 95% confidence intervals (based on the standard error) using the ggplot2 function
+# first calculate 95% CIs from the standard error
+CAD_chr9_mySNP_df$ci_lower <- CAD_chr9_mySNP_df$beta - 1.96 * CAD_chr9_mySNP_df$standard_error
+CAD_chr9_mySNP_df$ci_upper <- CAD_chr9_mySNP_df$beta + 1.96 * CAD_chr9_mySNP_df$standard_error
+
+myplot <- ggplot(CAD_chr9_mySNP_df, aes(x = beta, y = reorder(rsid, beta))) +
+  geom_point() +
+  geom_errorbarh(aes(xmin = ci_lower, xmax = ci_upper), height = 0.2) +
+  geom_vline(xintercept = 0, linetype = "dashed", colour = "grey50") +
+  labs(x = "Beta (95% CI)", y = NULL) +
+  theme_bw()
+
+print(myplot)
 ```
 
 
