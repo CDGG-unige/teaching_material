@@ -5,11 +5,8 @@ date: "Last compiled on `r format(Sys.time(), '%d %B, %Y')`"
 output: html_document
 params:
   output_folder: "Z:/CDGG/data_external/GWAS_catalog/cancer/GCST90255675.h.tsv"
+  data_folder: "C:/Users/frayling/OneDrive - Université de Genève/Teaching_Geneva/Msc_Biomedical/Human_genomics_module_2026_2027/Dummydata_codebook"
   data_file: "synthetic_gwas_teaching_dataset.csv"
-  BioHUG_patientdatabase_folder: "Z:/BioHUG/BioHUG_samples/BioHUG_patientdatabase"
-  BioHUG_DNAdatabase_folder: "Z:/BioHUG/BioHUG_samples/BioHUG_DNAdatabase"
-  biobank_data_folder: "project_data"
-
 
 
 ---
@@ -57,7 +54,7 @@ mydataname <- paste0(params$data_folder,"/",params$data_file)
 testdata <- read.csv(mydataname)
 
 phenotypes <- testdata %>% select(1:18)
-genotypes <- testdata %>% select(c(1,19:30))
+genotypes <- testdata %>% select(c(1,19:31))
 
 write_csv(phenotypes, file = file.path(params$data_folder, paste0("phenotypes",".csv"))) 
 write_csv(genotypes, file = file.path(params$data_folder, paste0("genotypes",".csv"))) 
