@@ -70,37 +70,21 @@ print(continuous_stats)
 #note that Claude uses "df" instead of the name of our df which is "phenotypes_df* and "age* instead of "age_years"
 #so lets modify our dataframe names so that we do not need to modify Claude's code. 
 
-df <- phenotypes_df %>% rename(age = "age_years", bmi = "bmi_kg_m2", disease1 = "cad_status")
+df <- phenotypes_df %>% rename(age = "age_years", bmi = "bmi_kg_m2", disease1 = "cad_status", disease2 = "t2d_status")
 
 
 #Claude code solution: 
-age_stats <- c(Mean = round(mean(df$age, na.rm=TRUE), 1),
-               SD   = round(sd(df$age,   na.rm=TRUE), 1),
-               Min  = min(df$age, na.rm=TRUE),
-               Max  = max(df$age, na.rm=TRUE))
 
-bmi_stats <- c(Mean = round(mean(df$bmi, na.rm=TRUE), 1),
-               SD   = round(sd(df$bmi,   na.rm=TRUE), 1),
-               Min  = min(df$bmi, na.rm=TRUE),
-               Max  = max(df$bmi, na.rm=TRUE))
-
-# --- Categorical: sex and disease prevalences ---
-sex_stats    <- c(Mean = paste0(round(mean(df$sex == "M", na.rm=TRUE)*100, 1), "% male"),
-                  SD="", Min="", Max="")
-
-dis1_stats   <- c(Mean = paste0(round(mean(df$disease1, na.rm=TRUE)*100, 1), "%"),
-                  SD="", Min="", Max="")
-
-# --- Stack into a table ---
+# Summary stats
 tbl <- rbind(
-  "Age (years)"    = age_stats,
-  "BMI (kg/m²)"   = bmi_stats,
-  "Sex (% male)"  = sex_stats,
-  "Coronary artery disease"  = dis1_stats
+  "Age (years)"      = c(Mean=round(mean(df$age),1),   SD=round(sd(df$age),1),   "%"=""),
+  "BMI (kg/m²)"     = c(Mean=round(mean(df$bmi),1),   SD=round(sd(df$bmi),1),   "%"=""),
+  "Female sex"       = c(Mean="",                       SD="",                     "%"=paste0(round(mean(df$sex=="F")*100,1),"%")),
+  "Hypertension"     = c(Mean="",                       SD="",                     "%"=paste0(round(mean(df$disease1)*100,1),"%")),
+  "T2Diabetes"         = c(Mean="",                       SD="",                     "%"=paste0(round(mean(df$disease2)*100,1),"%"))
 )
 
-# --- Render as a nice table ---
-kable(tbl, caption = "Table 1. Participant characteristics")
+kable(tbl, caption="Table 1. Participant characteristics")
 
 
 
