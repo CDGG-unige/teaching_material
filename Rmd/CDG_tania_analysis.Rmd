@@ -1,0 +1,55 @@
+---
+title: "CDG_template"
+output: html_document
+date: "2026-07-21"
+---
+
+#first install and load my dependencies, these are the additional code libraries that help we run functions and code in R.
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+#install and load libraries
+install.packages("dplyr")
+install.packages("data.table")
+install.packages("tidyverse")
+#install.packages("knitr")
+#install.packages("rmarkdown")
+#install.packages("yaml")
+#install.packages("ggplot2")
+#install.packages("renv")
+#renv::init()
+renv::snapshot()
+
+library(dplyr)
+library(data.table)
+library(tidyverse)
+library(knitr)
+library(yaml)
+library(ggplot2)
+```
+
+```{r}
+
+```
+
+
+#my code chunk to import and plot data 
+```{r}
+#import phenotypes data into an R object dataframe
+phenotypes_df <- read.csv("../../common-disease-genomics-data/phenotypes.csv")
+
+#make a plot and add it to your R environment as an object called "myplot"
+myplot <- ggplot(phenotypes_df, aes(x = bmi_kg_m2)) +
+  geom_histogram(binwidth = 2, fill = "steelblue", color = "white") +
+  labs(title = "Histogram of BMI", x = "BMI", y = "Count") +
+  theme_minimal()
+
+#you will need to change the "common-disease-genomics-data" part of the path to your data directory.
+ggsave("../../data-connector-tania/BMI_histogram.png", plot = myplot, width = 8, height = 6, dpi = 300)
+
+print(myplot)
+```
+
+
+
+
+
