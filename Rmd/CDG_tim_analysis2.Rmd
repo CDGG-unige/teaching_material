@@ -59,13 +59,39 @@ genotypes_df <- read.csv("../../common-disease-genomics-data/genotypes.csv")
 #Analyse my genotype and indication pair in the synthetic data
 ```{r}
 #select phenotype
-my_indication <- select(phenotypes_df, c(subject_id, sex, ldl_mg_dl))
+my_indication <- select(phenotypes_df, c(subject_id, age_years, sex, ldl_mg_dl))
 
 #select genotype
 my_genotype <- select(genotypes_df, c(subject_id, PCSK9_rs11591147))
 
 #join
-my_gene_indication_pair <- left_join()
+my_gene_indication_pair <- left_join(my_indication, my_genotype, by="subject_id")
+
+#rename your columns to something easier
+my_gene_indication_pair <- my_gene_indication_pair %>% rename(LDL = "ldl_mg_dl", PCSK9_genotype ="PCSK9_rs11591147", age = "age_years")
+
+#summarise the data subset by the three PCSK9 genotypes.
+my_gene_indication_pair %>%
+  group_by(PCSK9_genotype) %>%
+  summarise(across(c(age, LDL), list(mean = mean)))
+
+summary <- my_gene_indication_pair %>%
+  group_by(PCSK9_genotype) %>%
+  summarise(across(c(age, LDL), list(mean = mean)))
+
+#HERE HERE HERE HERE 
+summary <- my_gene_indication_pair %>%
+  group_by(PCSK9_genotype) %>%
+  summarise(across(c(age, LDL), list(mean = mean, n = sum, sd = sd)))
+
+#perform some basic regression analyses
+model_crude <- lm(LDL ~ PCSK9_genotype, data = my_gene_indication_pair)
+summary(model_crude)
+#now adjust for sex and age to reduce the spread or "variance" in the data.
+
+
+
+
 
 
 ```
