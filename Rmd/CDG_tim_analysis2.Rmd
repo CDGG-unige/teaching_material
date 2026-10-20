@@ -8,17 +8,18 @@ date: "2026-07-21"
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 #install and load libraries
-install.packages("dplyr")
-install.packages("data.table")
-install.packages("tidyverse")
-install.packages("ggforestplot")
+#install.packages("dplyr")
+#install.packages("data.table")
+#install.packages("tidyverse")
+#install.packages("ggforestplot")
 #install.packages("knitr")
 #install.packages("rmarkdown")
 #install.packages("yaml")
 #install.packages("ggplot2")
 #install.packages("renv")
 #renv::init()
-renv::snapshot()
+#renv::snapshot()
+install.packages("gtsummary")
 
 library(dplyr)
 library(data.table)
@@ -26,6 +27,7 @@ library(tidyverse)
 library(knitr)
 library(yaml)
 library(ggplot2)
+library(gtsummary)
 ```
 
 
@@ -71,27 +73,36 @@ my_gene_indication_pair <- left_join(my_indication, my_genotype, by="subject_id"
 my_gene_indication_pair <- my_gene_indication_pair %>% rename(LDL = "ldl_mg_dl", PCSK9_genotype ="PCSK9_rs11591147", age = "age_years")
 
 #summarise the data subset by the three PCSK9 genotypes.
-my_gene_indication_pair %>%
+my_summary <- my_gene_indication_pair %>%
   group_by(PCSK9_genotype) %>%
-  summarise(across(c(age, LDL), list(mean = mean)))
+  summarise(across(c(age, LDL), list(mean = mean, sd = sd)))
 
-summary <- my_gene_indication_pair %>%
-  group_by(PCSK9_genotype) %>%
-  summarise(across(c(age, LDL), list(mean = mean)))
-
-#HERE HERE HERE HERE 
-summary <- my_gene_indication_pair %>%
-  group_by(PCSK9_genotype) %>%
-  summarise(across(c(age, LDL), list(mean = mean, n = sum, sd = sd)))
+print(my_summary)
 
 #perform some basic regression analyses
 model_crude <- lm(LDL ~ PCSK9_genotype, data = my_gene_indication_pair)
 summary(model_crude)
-#now adjust for sex and age to reduce the spread or "variance" in the data.
 
+#the above produces output that is hard to understand. try this additional code from Claude:
+#it uses the tbl_regression() function
 
+tbl_regression(model_crude) |>
+  add_glance_source_note() |>          # adds R², F-stat, etc. as a footer
+  bold_p() |>                          # bolds p-values < 0.05
+  bold_labels()
 
+#now adjust for sex and age to reduce the spread or "variance" in the data and in case people of different ages and sex have slightly different distributions of genotypes (this could happen by chance in smaller datasets.
+#perform some basic regression analyses
+model_crude <- lm(LDL ~ PCSK9_genotype + age + sex, data = my_gene_indication_pair)
+summary(model_crude)
 
+#the above produces output that is hard to understand. try this additional code from Claude:
+#it uses the tbl_regression() function
+
+tbl_regression(model_crude) |>
+  add_glance_source_note() |>          # adds R², F-stat, etc. as a footer
+  bold_p() |>                          # bolds p-values < 0.05
+  bold_labels()
 
 
 ```
