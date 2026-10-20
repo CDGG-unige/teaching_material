@@ -17,6 +17,7 @@ install.packages("ggforestplot")
 #install.packages("yaml")
 #install.packages("ggplot2")
 #install.packages("renv")
+install.packages("gtsummary")
 #renv::init()
 renv::snapshot()
 
@@ -26,6 +27,7 @@ library(tidyverse)
 library(knitr)
 library(yaml)
 library(ggplot2)
+library(gtsummary)
 ```
 
 
