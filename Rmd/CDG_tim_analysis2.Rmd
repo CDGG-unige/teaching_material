@@ -104,6 +104,40 @@ tbl_regression(model_crude) |>
   bold_p() |>                          # bolds p-values < 0.05
   bold_labels()
 
+#logistic regression for binary outcome
+#first make a new variable, LDL_binary, where we split LDL into two catgories
+my_gene_indication_pair$LDL_binary <- as.integer(my_gene_indication_pair$LDL > 100)
+#just check what that looks like
+table(my_gene_indication_pair$PCSK9_genotype, my_gene_indication_pair$LDL_binary)
+
+#now run the logistic regression model (required when the outcome is binary (like a disease, 1,0 variable))
+model <- glm(
+  LDL_binary ~ PCSK9_genotype + age + sex,
+  data   = my_gene_indication_pair
+)
+summary(model)
+
+
+tbl_regression(model) |>
+  add_glance_source_note() |>          # adds R², F-stat, etc. as a footer
+  bold_p() |>                          # bolds p-values < 0.05
+  bold_labels()
+
+# Odds ratios (exponentiate coefficients)
+exp(coef(model))
+
+#create new variable that is LDLC in mmoll-1 not mg dl-1
+my_gene_indication_pair$LDL_mmol <- my_gene_indication_pair$LDL / 38.67
+
+#first make a new variable, LDL_binary, where we split LDL into two catgories
+#first define your cut off
+LDL_cutoff <- 4.0
+#then define the new variable
+my_gene_indication_pair$LDL_binary_mmol <- as.integer(my_gene_indication_pair$LDL_mmol > LDL_cutoff)
+#just check what that looks like, printing out a descriptive heading.
+print(paste("This table shows how the numbers of people with high cholesterol (>", LDL_cutoff, ") and low cholesterol are distributed across the 3 PCSK9 genotypes (0,1,2)"))
+table(my_gene_indication_pair$PCSK9_genotype, my_gene_indication_pair$LDL_binary_mmol)
+
 ```
 
 
