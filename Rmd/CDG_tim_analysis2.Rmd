@@ -18,8 +18,9 @@ knitr::opts_chunk$set(echo = TRUE)
 #install.packages("ggplot2")
 #install.packages("renv")
 #renv::init()
-#renv::snapshot()
+renv::snapshot()
 install.packages("gtsummary")
+install.packages("locuszoomr")
 
 library(dplyr)
 library(data.table)
@@ -31,7 +32,7 @@ library(gtsummary)
 ```
 
 
-#my code chunk to import and plot data 
+#SESSION 1. My code chunk to import and plot data 
 ```{r}
 #import phenotypes data into an R object dataframe
 phenotypes_df <- read.csv("../../common-disease-genomics-data/phenotypes.csv")
@@ -48,9 +49,14 @@ ggsave("../../test-data/BMI_histogram.png", plot = myplot, width = 8, height = 6
 
 ```
 
+#SESSION 1. some basic commands in R to describe my data
+```{r}
+#see slides 61 to 64
 
 
-#importing genotype data
+```
+
+#Session 3. importing genotype data
 ```{r}
 #import synthetic genotype data into an R object dataframe
 genotypes_df <- read.csv("../../common-disease-genomics-data/genotypes.csv")
@@ -135,11 +141,64 @@ LDL_cutoff <- 4.0
 #then define the new variable
 my_gene_indication_pair$LDL_binary_mmol <- as.integer(my_gene_indication_pair$LDL_mmol > LDL_cutoff)
 #just check what that looks like, printing out a descriptive heading.
-print(paste("This table shows how the numbers of people with high cholesterol (>", LDL_cutoff, ") and low cholesterol are distributed across the 3 PCSK9 genotypes (0,1,2)"))
+print(paste("This table shows how the numbers of people with high cholesterol (>", LDL_cutoff, "mmoll-1) and low cholesterol are distributed across the 3 PCSK9 genotypes (0,1,2)"))
 table(my_gene_indication_pair$PCSK9_genotype, my_gene_indication_pair$LDL_binary_mmol)
 
 ```
 
+
+#code chunk to import real data from GWAS summary stats and investigate specific chromosomes
+```{r}
+#import real GWAS data from my INDICATION and the chromosome that contains the gene that encodes the TARGET protein
+LDL_chr1_df <- read.csv("../../common-disease-genomics-data/GWAS_LDL_cholesterol/chr_LDL1.csv")
+
+LDL_chr1_myregion_df <- LDL_chr1_df %>% filter(base_pair_location >55000000 & base_pair_location < 56000000)
+
+
+#is the SNP used in the synthetic data present in the real GWAS data ?
+LDL_chr1_mySNP_df <- LDL_chr1_myregion_df %>% filter(rsid == "rs11591147")
+view(LDL_chr1_mySNP_df)
+
+
+#now lets plot the effect of the key variant on the INDICATION, including the 95% confidence intervals (based on the standard error) using the ggplot2 function
+# first calculate 95% CIs from the standard error
+LDL_chr1_mySNP_df$ci_lower <- LDL_chr1_mySNP_df$beta - 1.96 * LDL_chr1_mySNP_df$standard_error
+LDL_chr1_mySNP_df$ci_upper <- LDL_chr1_mySNP_df$beta + 1.96 * LDL_chr1_mySNP_df$standard_error
+
+myplot <- ggplot(LDL_chr1_mySNP_df, aes(x = beta, y = reorder(rsid, beta))) +
+  geom_point() +
+  geom_errorbarh(aes(xmin = ci_lower, xmax = ci_upper), height = 0.2) +
+  geom_vline(xintercept = 0, linetype = "dashed", colour = "grey50") +
+  labs(x = "Beta (95% CI)", y = NULL) +
+  theme_bw()
+
+print(myplot)
+```
+
+#locuszoomr plot
+```{r}
+# Locus plot using SLE GWAS data from Bentham et al 2015
+# Using subset of data embedded in the package
+library(locuszoomr)
+data(SLE_gwas_sub)
+
+library(EnsDb.Hsapiens.v75)
+loc <- locus(gene = 'UBE2L3', SLE_gwas_sub, flank = 1e5,
+             ens_db = "EnsDb.Hsapiens.v75")
+summary(loc)
+locus_plot(loc)
+
+# Or FTP download the full summary statistics from
+# https://www.ebi.ac.uk/gwas/studies/GCST003156
+library(data.table)
+SLE_gwas <- fread('../bentham_2015_26502338_sle_efo0002690_1_gwas.sumstats.tsv')
+
+loc <- locus(gene = 'UBE2L3', SLE_gwas, flank = 1e5,
+             ens_db = "EnsDb.Hsapiens.v75")
+locus_plot(loc)
+
+
+```
 
 
 
@@ -179,39 +238,6 @@ kable(tbl, caption="Table 1. Participant characteristics")
 
 
 
-```
-
-
-
-#code chunk to import GWAS summary stats and investigate specific chromosomes
-```{r}
-#import real GWAS data from my INDICATION and the chromosome that contains the gene that encodes the TARGET protein
-CAD_chr9_df <- read.csv("../../common-disease-genomics-data/GWAS_coronary_artery_disease/chr_CAD9.csv")
-
-#is the SNP used in the synthetic data present in the real GWAS data ?
-CAD_chr9_mySNP_df <- CAD_chr9_df %>% filter(rsid == "rs10757278")
-
-#filter on all variants in the gene and 100 kilo base pairs either side
-#HERE HERE
-#CAD_chr9_mygene_df <- CAD_chr9_df %>% filter(base_pair_location < )
-#chr9:21,967,752-21,974,857
-
-
-
-
-#now lets plot the effect of the key variant on the INDICATION, including the 95% confidence intervals (based on the standard error) using the ggplot2 function
-# first calculate 95% CIs from the standard error
-CAD_chr9_mySNP_df$ci_lower <- CAD_chr9_mySNP_df$beta - 1.96 * CAD_chr9_mySNP_df$standard_error
-CAD_chr9_mySNP_df$ci_upper <- CAD_chr9_mySNP_df$beta + 1.96 * CAD_chr9_mySNP_df$standard_error
-
-myplot <- ggplot(CAD_chr9_mySNP_df, aes(x = beta, y = reorder(rsid, beta))) +
-  geom_point() +
-  geom_errorbarh(aes(xmin = ci_lower, xmax = ci_upper), height = 0.2) +
-  geom_vline(xintercept = 0, linetype = "dashed", colour = "grey50") +
-  labs(x = "Beta (95% CI)", y = NULL) +
-  theme_bw()
-
-print(myplot)
 ```
 
 
