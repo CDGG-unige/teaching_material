@@ -4,7 +4,7 @@ author: "Tim"
 date: "Last compiled on `r format(Sys.time(), '%d %B, %Y')`"
 output: html_document
 params:
-  output_folder: "Z:/CDGG/data_external/GWAS_catalog/cancer/GCST90255675.h.tsv"
+  output_folder: "Z:/CDGG/data_external/GWAS_catalog/Lipids"
   data_folder: "C:/Users/frayling/OneDrive - Université de Genève/Teaching_Geneva/Msc_Biomedical/Human_genomics_module_2026_2027/Dummydata_codebook"
   data_file: "synthetic_gwas_teaching_dataset.csv"
 
@@ -34,19 +34,7 @@ library(ggplot2)
 
 ```
 
-```{r}
-# render from TF's CMU laptop
-rmarkdown::render("test_import_data.Rmd", 
-                  output_file = paste0("C:/Users/frayling/OneDrive - Université de Genève/Data/R_projects_scripts/BioHUG/", Sys.Date(), "_BioHUG_update"),
-                  params = list(
-  current_month_folder = "C:/Users/frayling/Université de Genève/BioHUG-Sample_processing - 2026/7. July_2026", #Tim use from CMU
-  next_date = "20260709",
-  write_files = TRUE
-                  )
-                  )
-```
-
-#import data
+#import synthetic data
 
 ```{r}
 mytestdata <- read.csv("C:/Users/frayling/OneDrive - Université de Genève/Teaching_Geneva/Msc_Biomedical/Human_genomics_module_2026_2027/Dummydata_codebook/synthetic_gwas_teaching_dataset.csv")
@@ -68,10 +56,7 @@ write_csv(genotypes, file = file.path(params$data_folder, paste0("genotypes",".c
 #CAD
 GWAS_CAD_df <- fread("Z:/CDGG/data_external/GWAS_catalog/CAD/cad.add.160614.website.txt")
 #select and rename only the critical columns before splitting
-GWAS_CAD_df <- GWAS_CAD_df %>% select(c(1:7,9:11)) %>% rename(rsid = "markername", chromosome = "chr", base_pair_location = "bp_hg19", effect_allele = "effect_allele", other_allele = "noneffect_allele", effect_allele_frequency = "effect_allele_freq", standard_error = "se_dgc", p_value = "p_dgc", info = "median_info")  
-
-
-
+GWAS_CAD_df <- GWAS_CAD_df %>% select(c(1:7,9:11)) %>% rename(rsid = "markername", chromosome = "chr", base_pair_location = "bp_hg19", effect_allele = "effect_allele", other_allele = "noneffect_allele", effect_allele_frequency = "effect_allele_freq", beta = "beta", standard_error = "se_dgc", p_value = "p_dgc", info = "median_info")  
 #from Claude:
 for (i in c(1:22)) {
   chr_df <- GWAS_CAD_df[GWAS_CAD_df$chr == i, ]
@@ -98,7 +83,15 @@ for (i in c(1:22)) {
   fwrite(chr_df, file = file.path(params$output_folder, paste0("chr","_CORECCAN", i, ".csv")), row.names = FALSE)
 }
 
-
+#lipids_LDL
+GWAS_LDL_df <- fread("Z:/CDGG/data_external/GWAS_catalog/Lipids/with_BF_meta-analysis_AFR_EAS_EUR_HIS_SAS_LDL_INV_ALL_with_N_1")
+#select and rename only the critical columns before splitting
+GWAS_LDL_df <- GWAS_LDL_df %>% select(c(1:6,8,14:16)) %>% rename(rsid = "rsID", chromosome = "CHROM", base_pair_location = "POS_b37", effect_allele = "ALT", other_allele = "REF", effect_allele_frequency = "POOLED_ALT_AF", beta = "METAL_Effect", standard_error = "METAL_StdErr", p_value = "METAL_Pvalue")  
+#from Claude:
+for (i in c(1:22)) {
+  chr_df <- GWAS_LDL_df[GWAS_LDL_df$chr == i, ]
+  fwrite(chr_df, file = file.path(params$output_folder, paste0("chr","_LDL", i, ".csv")), row.names = FALSE)
+}
 
 
 
@@ -109,5 +102,15 @@ GWAS_psoriasis_df <- fread("Z:/CDGG/data_external/GWAS_catalog/Psoriasis/2314359
 
 ```
 
+#locuszoomr test
+```{r}
+test_gwas <- fread("Z:/CDGG/data_external/GWAS_catalog/BMI/Suzuki.Nature2024.T2DGGI.MultiAncestry.sumstats/All_Metal_LDSC-CORR_Neff.v2.txt")
+
+loc <- locus(gene = 'TCF7L2', test_gwas, flank = 1e5,
+             ens_db = "EnsDb.Hsapiens.v75")
+locus_plot(loc)
+
+
+```
 
 
