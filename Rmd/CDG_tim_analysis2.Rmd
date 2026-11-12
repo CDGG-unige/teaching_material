@@ -148,6 +148,7 @@ table(my_gene_indication_pair$PCSK9_genotype, my_gene_indication_pair$LDL_binary
 
 
 #code chunk to import real data from GWAS summary stats and investigate specific chromosomes
+#slides 87 onwards
 ```{r}
 #import real GWAS data from my INDICATION and the chromosome that contains the gene that encodes the TARGET protein
 LDL_chr1_df <- read.csv("../../common-disease-genomics-data/GWAS_LDL_cholesterol/chr_LDL1.csv")
@@ -155,24 +156,57 @@ LDL_chr1_df <- read.csv("../../common-disease-genomics-data/GWAS_LDL_cholesterol
 LDL_chr1_myregion_df <- LDL_chr1_df %>% filter(base_pair_location >55000000 & base_pair_location < 56000000)
 
 
+#remove the full chromosome data as it uses a lot of memory
+rm(LDL_chr1_df)
+
+#obtain a better feel for your data. 
+#what is the distribution of effect allele frequencies ?
+#number of common, rare and very rare effect alleles
+
+sum(LDL_chr1_myregion_df$effect_allele_frequency > 0.0, na.rm = TRUE)
+print(sum(LDL_chr1_myregion_df$effect_allele_frequency > 0.0, na.rm = TRUE))
+print(sum(LDL_chr1_myregion_df$effect_allele_frequency > 0.05, na.rm = TRUE)) #present in 1 in 20 people.
+print(sum(LDL_chr1_myregion_df$effect_allele_frequency < 0.01, na.rm = TRUE)) #present in 1 in 50 people or less
+print(sum(LDL_chr1_myregion_df$effect_allele_frequency < 0.001, na.rm = TRUE)) #present in 1 in 500 people or less
+
 #is the SNP used in the synthetic data present in the real GWAS data ?
 LDL_chr1_mySNP_df <- LDL_chr1_myregion_df %>% filter(rsid == "rs11591147")
 view(LDL_chr1_mySNP_df)
 
 
-#now lets plot the effect of the key variant on the INDICATION, including the 95% confidence intervals (based on the standard error) using the ggplot2 function
-# first calculate 95% CIs from the standard error
-LDL_chr1_mySNP_df$ci_lower <- LDL_chr1_mySNP_df$beta - 1.96 * LDL_chr1_mySNP_df$standard_error
-LDL_chr1_mySNP_df$ci_upper <- LDL_chr1_mySNP_df$beta + 1.96 * LDL_chr1_mySNP_df$standard_error
+#now lets plot the effect of the key variant on the INDICATION using the ggplot2 function
 
-myplot <- ggplot(LDL_chr1_mySNP_df, aes(x = beta, y = reorder(rsid, beta))) +
+myplot <- ggplot(LDL_chr1_mySNP_df, aes(x = base_pair_location, y = beta)) +
   geom_point() +
-  geom_errorbarh(aes(xmin = ci_lower, xmax = ci_upper), height = 0.2) +
   geom_vline(xintercept = 0, linetype = "dashed", colour = "grey50") +
-  labs(x = "Beta (95% CI)", y = NULL) +
+  labs(x = "base pair position on chr 1", y = NULL) +
   theme_bw()
 
 print(myplot)
+
+#but this is a little boring, lets plot the whole region add title and axes labels , try giving AI your code and a prompt to improve it
+#we first need to convert the p value to a more sensible, plottable number. we do this with the "-log 10" conversion
+LDL_chr1_myregion_df$neg_log10_p <- -log10(LDL_chr1_myregion_df$p_value)
+
+myplot <- ggplot(LDL_chr1_myregion_df, aes(x = base_pair_location, y = neg_log10_p)) +
+  geom_point() +
+  geom_vline(xintercept = 0, linetype = "dashed", colour = "grey50") +
+  labs(
+    title    = "Effect of chromosome 1 variants on LDL cholesterol",
+    subtitle = "taken from Latest LDLC GWAS",
+    x        = "base pair location on chr 1",
+    y        = "-log10 p value of variant - LDLC association",
+    caption  = "Data source: LDL GWAS data"
+  ) +
+  theme_bw() +
+  theme(
+    plot.title    = element_text(face = "bold", size = 14),
+    plot.subtitle = element_text(colour = "grey40", size = 11),
+    plot.caption  = element_text(colour = "grey50", size = 9, hjust = 0)
+  )
+
+print(myplot)
+
 ```
 
 #locuszoomr plot
