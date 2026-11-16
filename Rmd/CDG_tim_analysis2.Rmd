@@ -20,7 +20,8 @@ knitr::opts_chunk$set(echo = TRUE)
 #renv::init()
 renv::snapshot()
 install.packages("gtsummary")
-install.packages("locuszoomr")
+#install.packages("locuszoomr")
+install.packages("patchwork")
 
 library(dplyr)
 library(data.table)
@@ -29,6 +30,7 @@ library(knitr)
 library(yaml)
 library(ggplot2)
 library(gtsummary)
+library(patchwork)
 ```
 
 
@@ -188,9 +190,9 @@ print(myplot)
 #we first need to convert the p value to a more sensible, plottable number. we do this with the "-log 10" conversion
 LDL_chr1_myregion_df$neg_log10_p <- -log10(LDL_chr1_myregion_df$p_value)
 
+#then the plot, code for which I have asked Claude.
 myplot <- ggplot(LDL_chr1_myregion_df, aes(x = base_pair_location, y = neg_log10_p)) +
   geom_point() +
-  geom_vline(xintercept = 0, linetype = "dashed", colour = "grey50") +
   labs(
     title    = "Effect of chromosome 1 variants on LDL cholesterol",
     subtitle = "taken from Latest LDLC GWAS",
@@ -198,6 +200,7 @@ myplot <- ggplot(LDL_chr1_myregion_df, aes(x = base_pair_location, y = neg_log10
     y        = "-log10 p value of variant - LDLC association",
     caption  = "Data source: LDL GWAS data"
   ) +
+  scale_x_continuous(expand = expansion(mult = c(0.02, 0.02))) +
   theme_bw() +
   theme(
     plot.title    = element_text(face = "bold", size = 14),
@@ -208,6 +211,48 @@ myplot <- ggplot(LDL_chr1_myregion_df, aes(x = base_pair_location, y = neg_log10
 print(myplot)
 
 ```
+
+#code to augment the locus zoom plot with a labelled symbol to represent the gene
+```{r}
+
+gene_start <- 55505221
+gene_end   <- 55530525
+gene_name  <- "PCSK9"
+
+# Get x range from your data to match axes
+x_min <- min(LDL_chr1_myregion_df$base_pair_location)
+x_max <- max(LDL_chr1_myregion_df$base_pair_location)
+
+gene_track <- ggplot() +
+  annotate("segment",
+           x = gene_start, xend = gene_end,
+           y = 1, yend = 1,
+           linewidth = 4, colour = "steelblue") +
+  annotate("text",
+           x = (gene_start + gene_end) / 2,
+           y = 1.4,
+           label = gene_name,
+           size = 3.5, colour = "steelblue", fontface = "italic") +
+  scale_x_continuous(limits = c(x_min, x_max),
+                     expand = expansion(mult = c(0.02, 0.02))) +
+  scale_y_continuous(limits = c(0.5, 2)) +
+  labs(x = "base pair location on chr 1", y = NULL) +
+  theme_bw() +
+  theme(
+    axis.text.y  = element_blank(),
+    axis.ticks.y = element_blank(),
+    panel.grid   = element_blank()
+  )
+
+# Stack the two plots, with the gene track taking up less height
+my_updated_plot <- myplot / gene_track + plot_layout(heights = c(4, 1))
+print(my_updated_plot)
+
+
+```
+
+
+
 
 #locuszoomr plot
 ```{r}
