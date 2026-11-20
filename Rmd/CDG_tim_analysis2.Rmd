@@ -56,9 +56,7 @@ library(patchwork)
 ```{r rendering, echo=FALSE, eval= FALSE, include=FALSE}
 #run this line to render your report into a neat html document. You will need to change the test-data3 directory to your own directory that is linked to your SWITCH drive
 rmarkdown::render("CDG_tim_analysis2.Rmd", 
-                  output_file = "../../test-data3/myreport_2026-11.html")  # renders to same dir as .Rmd
-
-
+                  output_file = "../../test-data3/myreport_2026-11.html")  
 
 ```
 
@@ -96,7 +94,7 @@ genotypes_df <- read.csv("../../common-disease-genomics-data/genotypes.csv")
 
 
 #Analyse my genotype and indication pair in the synthetic data
-```{r analyse_synthetic_data, echo = FALSE, include=FALSE, eval=FALSE}
+```{r analyse_synthetic_data, echo = FALSE, include=TRUE, eval=TRUE}
 #select phenotype
 my_indication <- select(phenotypes_df, c(subject_id, age_years, sex, ldl_mg_dl))
 
@@ -185,7 +183,6 @@ table(my_gene_indication_pair$PCSK9_genotype, my_gene_indication_pair$LDL_binary
 #LDL_chr1_df <- read.csv("../../common-disease-genomics-data/GWAS_LDL_cholesterol/chr_LDL1.csv")
 
 #LDL_chr1_myregion_df <- LDL_chr1_df %>% filter(base_pair_location >55000000 & base_pair_location < 56000000)
-
 
 #remove the full chromosome data as it uses a lot of memory
 #rm(LDL_chr1_df)
