@@ -20,7 +20,7 @@ output:
 
 ---
 
-#first install and load my dependencies, these are the additional code libraries that help we run functions and code in R.
+#first install and load my dependencies, these are the additional code libraries that help us run functions and code in R.
 ```{r setup, echo=FALSE, eval= FALSE, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 #install and load libraries
@@ -54,12 +54,11 @@ library(patchwork)
 #ONLY NEEDED for Session at the end:
 #rendering my report into a neat html output
 ```{r rendering, echo=FALSE, eval= FALSE, include=FALSE}
+#run this line to render your report into a neat html document. You will need to change the test-data3 directory to your own directory that is linked to your SWITCH drive
 rmarkdown::render("CDG_tim_analysis2.Rmd", 
-                  output_file = "myreport_2026-11.html")  # renders to same dir as .Rmd
+                  output_file = "../../test-data3/myreport_2026-11.html")  # renders to same dir as .Rmd
 
-file.copy("myreport_2026-11.html", 
-          "../../common-disease-genomics-data/myreport_2026-11.html", 
-          overwrite = TRUE)
+
 
 ```
 
@@ -75,6 +74,7 @@ myplot <- ggplot(phenotypes_df, aes(x = bmi_kg_m2)) +
   labs(title = "Histogram of BMI", x = "BMI", y = "Count") +
   theme_minimal()
 
+print(myplot)
 #you will need to change the "common-disease-genomics-data" part of the path to your data directory.
 ggsave("../../test-data/BMI_histogram.png", plot = myplot, width = 8, height = 6, dpi = 300)
 
