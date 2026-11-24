@@ -80,7 +80,7 @@ ggsave("../../test-data/BMI_histogram.png", plot = myplot, width = 8, height = 6
 
 #SESSION 1. some basic commands in R to describe my data
 ```{r basiccommands, echo = FALSE, include=TRUE, eval=TRUE}
-#see slides 61 to 64
+#see slides 62 to 65
 
 
 ```
@@ -176,16 +176,16 @@ table(my_gene_indication_pair$PCSK9_genotype, my_gene_indication_pair$LDL_binary
 ```
 
 
-#code chunk to import real data from GWAS summary stats and investigate specific chromosomes
-#slides 87 onwards
-```{r import_real_GWAS_data, echo = FALSE, include=TRUE, eval=TRUE}
-#import real GWAS data from my INDICATION and the chromosome that contains the gene that encodes the TARGET protein
-#LDL_chr1_df <- read.csv("../../common-disease-genomics-data/GWAS_LDL_cholesterol/chr_LDL1.csv")
 
-#LDL_chr1_myregion_df <- LDL_chr1_df %>% filter(base_pair_location >55000000 & base_pair_location < 56000000)
+#code chunk to import real data from GWAS summary stats and investigate specific chromosomes
+```{r import_real_GWAS_data, echo = FALSE, include=FALSE, eval=TRUE}
+#import real GWAS data from my INDICATION and the chromosome that contains the gene that encodes the TARGET protein
+LDL_chr1_df <- read.csv("../../common-disease-genomics-data/GWAS_LDL_cholesterol/chr_LDL1.csv")
+
+LDL_chr1_myregion_df <- LDL_chr1_df %>% filter(base_pair_location >55000000 & base_pair_location < 56000000)
 
 #remove the full chromosome data as it uses a lot of memory
-#rm(LDL_chr1_df)
+rm(LDL_chr1_df)
 
 #obtain a better feel for your data. 
 #what is the distribution of effect allele frequencies ?
@@ -212,12 +212,10 @@ myplot <- ggplot(LDL_chr1_mySNP_df, aes(x = base_pair_location, y = beta)) +
 
 print(myplot)
 
-
-
 ```
 
-#a better plot
-```{r plot, echo = FALSE, include=TRUE, eval=TRUE}
+#First locus zoom plot 
+```{r plot, echo = FALSE, include=FALSE, eval=TRUE}
 #but this is a little boring, lets plot the whole region add title and axes labels , try giving AI your code and a prompt to improve it
 #we first need to convert the p value to a more sensible, plottable number. we do this with the "-log 10" conversion
 LDL_chr1_myregion_df$neg_log10_p <- -log10(LDL_chr1_myregion_df$p_value)
@@ -246,9 +244,10 @@ print(myplot)
 
 
 
-#code to augment the locus zoom plot with a labelled symbol to represent the gene
+##This plot shows the PCSK9 gene region and how variants in it are associated with LDL cholesterol levels
+#Data is from the publication by xxxxxx et al
 ```{r plot2, echo = FALSE, include=TRUE, eval=TRUE}
-
+#code to augment the locus zoom plot with a labelled symbol to represent the gene
 gene_start <- 55505221
 gene_end   <- 55530525
 gene_name  <- "PCSK9"
