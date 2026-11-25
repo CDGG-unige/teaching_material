@@ -21,7 +21,7 @@ output:
 ---
 
 
-```{r setup, echo=FALSE, eval= FALSE, include=FALSE}
+```{r setup, echo=FALSE, eval= TRUE, include=FALSE}
 #first install and load my dependencies, these are the additional code libraries that help us run functions and code in R.
 
 if (is.null(renv::project())) stop("renv not active – open the .Rproj file first")
@@ -38,7 +38,9 @@ library(yaml)
 library(gtsummary)
 library(patchwork)
 
-
+#notes on renv
+#As you continue to work on your project, you will install and upgrade packages, either using #install.packages() and update.packages() or renv::install() and renv::update(). After you’ve #confirmed your code works as expected, use renv::snapshot() to record the packages and their #sources in the lockfile.
+#https://rstudio.github.io/renv/
 
 ```
 

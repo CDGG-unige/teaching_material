@@ -13,24 +13,11 @@ params:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-#install and load libraries
-install.packages("dplyr")
-install.packages("data.table")
-install.packages("tidyverse")
-#install.packages("knitr")
-#install.packages("rmarkdown")
-#install.packages("yaml")
-#install.packages("ggplot2")
-#install.packages("renv")
-#install.packages("BiocManager")
-#install.packages("ensembldb")
-#for genome build 37
-#install.packages("EnsDb.Hsapiens.v75")
-#for genome build 38
-#install.packages("EnsDb.Hsapiens.v86")
-#install.packages("locuszoomr")
-#renv::init()
-renv::snapshot()
+
+
+#notes on renv
+#As you continue to work on your project, you will install and upgrade packages, either using #install.packages() and update.packages() or renv::install() and renv::update(). After you’ve #confirmed your code works as expected, use renv::snapshot() to record the packages and their #sources in the lockfile.
+#https://rstudio.github.io/renv/
 
 library(dplyr)
 library(data.table)
@@ -38,13 +25,7 @@ library(tidyverse)
 library(knitr)
 library(yaml)
 library(ggplot2)
-library(BiocManager)
-library(ensembldb)
-#note for GWAS data on build 37 need
-library(EnsDb.Hsapiens.v75)
-#for GWAS data on build 38 will need to install and load
-#EnsDb.Hsapiens.v86
-library(locuszoomr)
+
 ```
 
 #import synthetic data
@@ -114,25 +95,3 @@ GWAS_psoriasis_df <- fread("Z:/CDGG/data_external/GWAS_catalog/Psoriasis/2314359
 
 
 ```
-
-#locuszoomr test
-```{r}
-#import some test data
-test_gwas <- fread("Z:/CDGG/data_external/GWAS_catalog/lipids/chr_LDL1.csv")
-
-#rename some columns
-test_gwas <- test_gwas %>% dplyr::rename(chrom = "chromosome", pos = "base_pair_location", p = "p_value")
-
-#convert p value column to numeric.
-test_gwas$p <- as.numeric(test_gwas$p)
-#check;
-sum(is.na(test_gwas$p))  # count NAs introduced by coercion
-
-loc <- locus(gene = 'PCSK9', test_gwas, flank = 1e5,
-             ens_db = "EnsDb.Hsapiens.v75")
-locus_plot(loc)
-
-
-```
-
-
