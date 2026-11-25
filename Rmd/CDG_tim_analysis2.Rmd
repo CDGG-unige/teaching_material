@@ -34,7 +34,7 @@ knitr::opts_chunk$set(echo = TRUE)
 #install.packages("ggplot2")
 #install.packages("renv")
 #renv::init()
-renv::snapshot()
+#renv::snapshot()
 install.packages("gtsummary")
 #install.packages("locuszoomr")
 install.packages("patchwork")
@@ -51,17 +51,21 @@ library(gtsummary)
 library(patchwork)
 ```
 
+
+```{r rendering, echo=FALSE, eval= FALSE, include=FALSE}
 #ONLY NEEDED for Session at the end:
 #rendering my report into a neat html output
-```{r rendering, echo=FALSE, eval= FALSE, include=FALSE}
 #run this line to render your report into a neat html document. You will need to change the test-data3 directory to your own directory that is linked to your SWITCH drive
 rmarkdown::render("CDG_tim_analysis2.Rmd", 
                   output_file = "../../test-data3/myreport_2026-11.html")  
 
 ```
 
-#SESSION 1. My code chunk to import and plot data 
+**here you will include some short text to provide an executive summary of your report**
+*including using the R markdown syntax to format the report and its text*
+ 
 ```{r import_synthetic_phenotype_data, echo = FALSE, include=TRUE, eval=TRUE}
+#SESSION 1. My code chunk to import and plot data
 #import phenotypes data into an R object dataframe
 phenotypes_df <- read.csv("../../common-disease-genomics-data/phenotypes.csv")
 
@@ -69,32 +73,38 @@ phenotypes_df <- read.csv("../../common-disease-genomics-data/phenotypes.csv")
 #make a plot and add it to your R environment as an object called "myplot"
 myplot <- ggplot(phenotypes_df, aes(x = bmi_kg_m2)) +
   geom_histogram(binwidth = 2, fill = "steelblue", color = "white") +
-  labs(title = "Histogram of BMI", x = "BMI", y = "Count") +
+  labs(title = "Histogram of BMI in the synthetic data", x = "BMI", y = "Count") +
   theme_minimal()
 
+
 print(myplot)
+
+#save my plot
 #you will need to change the "common-disease-genomics-data" part of the path to your data directory.
 ggsave("../../test-data/BMI_histogram.png", plot = myplot, width = 8, height = 6, dpi = 300)
 
 ```
 
-#SESSION 1. some basic commands in R to describe my data
+
 ```{r basiccommands, echo = FALSE, include=TRUE, eval=TRUE}
+#SESSION 1. some basic commands in R to describe my data
 #see slides 62 to 65
 
 
 ```
 
-#Session 3. importing genotype data
+
 ```{r import_synthetic_genotype_data, echo = FALSE, include=TRUE, eval=TRUE}
+#Session 3. importing genotype data
 #import synthetic genotype data into an R object dataframe
 genotypes_df <- read.csv("../../common-disease-genomics-data/genotypes.csv")
 
 ```
 
 
+
+```{r analyse_synthetic_data, echo = FALSE, include=FALSE, eval=TRUE}
 #Analyse my genotype and indication pair in the synthetic data
-```{r analyse_synthetic_data, echo = FALSE, include=TRUE, eval=TRUE}
 #select phenotype
 my_indication <- select(phenotypes_df, c(subject_id, age_years, sex, ldl_mg_dl))
 
@@ -112,12 +122,16 @@ my_summary <- my_gene_indication_pair %>%
   group_by(PCSK9_genotype) %>%
   summarise(across(c(age, LDL), list(mean = mean, sd = sd)))
 
-print(my_summary)
+#print(my_summary)
 
 #perform some basic regression analyses
 model_crude <- lm(LDL ~ PCSK9_genotype, data = my_gene_indication_pair)
 summary(model_crude)
 
+```
+
+**Below are some tables of output but I will need to describe them more thoroughly in my report**
+```{r analyse_synthetic_data2, echo = FALSE, include=TRUE, eval=TRUE}
 #the above produces output that is hard to understand. try this additional code from Claude:
 #it uses the tbl_regression() function
 
@@ -129,10 +143,6 @@ tbl_regression(model_crude) |>
 #now adjust for sex and age to reduce the spread or "variance" in the data and in case people of different ages and sex have slightly different distributions of genotypes (this could happen by chance in smaller datasets.
 #perform some basic regression analyses
 model_crude <- lm(LDL ~ PCSK9_genotype + age + sex, data = my_gene_indication_pair)
-summary(model_crude)
-
-#the above produces output that is hard to understand. try this additional code from Claude:
-#it uses the tbl_regression() function
 
 tbl_regression(model_crude) |>
   add_glance_source_note() |>          # adds R², F-stat, etc. as a footer
@@ -150,7 +160,7 @@ model <- glm(
   LDL_binary ~ PCSK9_genotype + age + sex,
   data   = my_gene_indication_pair
 )
-summary(model)
+#summary(model)
 
 
 tbl_regression(model) |>
@@ -176,9 +186,8 @@ table(my_gene_indication_pair$PCSK9_genotype, my_gene_indication_pair$LDL_binary
 ```
 
 
-
-#code chunk to import real data from GWAS summary stats and investigate specific chromosomes
 ```{r import_real_GWAS_data, echo = FALSE, include=FALSE, eval=TRUE}
+#code chunk to import real data from GWAS summary stats and investigate specific chromosomes
 #import real GWAS data from my INDICATION and the chromosome that contains the gene that encodes the TARGET protein
 LDL_chr1_df <- read.csv("../../common-disease-genomics-data/GWAS_LDL_cholesterol/chr_LDL1.csv")
 
@@ -214,8 +223,9 @@ print(myplot)
 
 ```
 
-#First locus zoom plot 
+
 ```{r plot, echo = FALSE, include=FALSE, eval=TRUE}
+#First locus zoom plot 
 #but this is a little boring, lets plot the whole region add title and axes labels , try giving AI your code and a prompt to improve it
 #we first need to convert the p value to a more sensible, plottable number. we do this with the "-log 10" conversion
 LDL_chr1_myregion_df$neg_log10_p <- -log10(LDL_chr1_myregion_df$p_value)
@@ -242,10 +252,9 @@ print(myplot)
 ```
 
 
-
-
-##This plot shows the PCSK9 gene region and how variants in it are associated with LDL cholesterol levels
-#Data is from the publication by xxxxxx et al
+**The plot below shows the PCSK9 gene region and how variants in it are associated with LDL cholesterol levels**
+*We can see that there is a very strong association between variants in and around the PCSK9 gene and LDL cholesterol levels*
+Data is from the publication by [Graham et al](https://www.nature.com/articles/s41586-021-04064-3)
 ```{r plot2, echo = FALSE, include=TRUE, eval=TRUE}
 #code to augment the locus zoom plot with a labelled symbol to represent the gene
 gene_start <- 55505221
@@ -284,7 +293,7 @@ print(my_updated_plot)
 
 ```
 
-
+*Conclusion: what is my conclusion ?*
 
 
 #locuszoomr plot
