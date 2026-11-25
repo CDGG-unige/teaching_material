@@ -24,7 +24,6 @@ output:
 ```{r setup, echo=FALSE, eval= TRUE, include=FALSE}
 #first install and load my dependencies, these are the additional code libraries that help us run functions and code in R.
 
-if (is.null(renv::project())) stop("renv not active – open the .Rproj file first")
 
 knitr::opts_chunk$set(echo = TRUE)
 
