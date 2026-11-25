@@ -1,0 +1,173 @@
+---
+title: "My Report"
+author: "Tim Frayling"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true             # table of contents
+    toc_float: true       # floating sidebar TOC
+    toc_depth: 3
+    number_sections: true
+    theme: flatly         # bootswatch theme (cosmo, lumen, paper, etc.)
+    highlight: tango      # code syntax highlighting
+    code_folding: hide    # hide/show code chunks (show, hide, none)
+    self_contained: true  # embed all assets in one .html file
+    df_print: paged       # nice interactive data frame printing
+---
+
+
+
+
+---
+
+
+```{r setup, echo=FALSE, eval= FALSE, include=FALSE}
+#first install and load my dependencies, these are the additional code libraries that help us run functions and code in R.
+
+knitr::opts_chunk$set(echo = TRUE)
+
+# Package management is handled by renv (see renv.lock).
+# First time on a new machine: run renv::restore() in the Console.
+
+install.packages("gtsummary")
+install.packages("patchwork")
+library(tidyverse)   # loads dplyr, ggplot2, tidyr, readr, purrr, etc.
+library(data.table)
+library(knitr)
+library(yaml)
+library(gtsummary)
+library(patchwork)
+
+#notes on renv
+#As you continue to work on your project, you will install and upgrade packages, either using #install.packages() and update.packages() or renv::install() and renv::update(). After you’ve #confirmed your code works as expected, use renv::snapshot() to record the packages and their #sources in the lockfile.
+#https://rstudio.github.io/renv/
+
+```
+
+
+```{r rendering, echo=FALSE, eval= FALSE, include=FALSE}
+#ONLY NEEDED for Session at the end:
+#rendering my report into a neat html output
+#run this line to render your report into a neat html document. You will need to change the test-data3 directory to your own directory that is linked to your SWITCH drive
+rmarkdown::render("CDG_tim_analysis2.Rmd", 
+                  output_file = "../../test-data3/myreport_2026-11.html")  
+
+```
+
+# HEADER TITLE
+## Executive summary
+**here you will include some short text to provide an executive summary of your report**
+*including using the R markdown syntax to format the report and its text*
+
+
+## Description of data used 1. Synthetic data. 
+```{r import_synthetic_phenotype_data, echo = FALSE, include=TRUE, eval=TRUE}
+#SESSION 1. My code chunk to import and plot data
+#import phenotypes data into an R object dataframe
+phenotypes_df <- read.csv("../../common-disease-genomics-data/phenotypes.csv")
+
+#check
+#make a plot and add it to your R environment as an object called "myplot"
+myplot <- ggplot(phenotypes_df, aes(x = bmi_kg_m2)) +
+  geom_histogram(binwidth = 2, fill = "steelblue", color = "white") +
+  labs(title = "Histogram of BMI in the synthetic data", x = "BMI", y = "Count") +
+  theme_minimal()
+
+
+print(myplot)
+
+#save my plot
+#you will need to change the "common-disease-genomics-data" part of the path to your data directory.
+ggsave("../../test-data/BMI_histogram.png", plot = myplot, width = 8, height = 6, dpi = 300)
+
+```
+
+
+
+```{r import_synthetic_genotype_data, echo = FALSE, include=TRUE, eval=TRUE}
+#Session 3. importing genotype data
+#import synthetic genotype data into an R object dataframe
+genotypes_df <- read.csv("../../common-disease-genomics-data/genotypes.csv")
+
+```
+
+## Description of data used 2. GWAS summary data. 
+
+## Description of Analysis: my drug indication pair
+
+```{r analyse_synthetic_data, echo = FALSE, include=FALSE, eval=TRUE}
+#Analyse my genotype and indication pair in the synthetic data
+#select phenotype
+my_indication <- select(phenotypes_df, c(subject_id, age_years, sex, ldl_mg_dl))
+
+#select genotype
+my_genotype <- select(genotypes_df, c(subject_id, PCSK9_rs11591147))
+
+#join
+
+
+#rename your columns to something easier
+
+
+#summarise the data subset by the three PCSK9 genotypes.
+
+
+#print(my_summary)
+
+#perform some basic regression analyses
+
+
+```
+
+**Below are some tables of output but I will need to describe them more thoroughly in my report**
+```{r analyse_synthetic_data2, echo = FALSE, include=TRUE, eval=TRUE}
+#the above produces output that is hard to understand. try this additional code from Claude:
+#it uses the tbl_regression() function
+
+tbl_regression(model_crude) |>
+  add_glance_source_note() |>          # adds R², F-stat, etc. as a footer
+  bold_p() |>                          # bolds p-values < 0.05
+  bold_labels()
+
+
+```
+
+
+```{r import_real_GWAS_data, echo = FALSE, include=FALSE, eval=TRUE}
+#code chunk to import real data from GWAS summary stats and investigate specific chromosomes
+#import real GWAS data from my INDICATION and the chromosome that contains the gene that encodes the TARGET protein
+LDL_chr1_df <- read.csv("../../common-disease-genomics-data/GWAS_LDL_cholesterol/chr_LDL1.csv")
+
+LDL_chr1_myregion_df <- LDL_chr1_df %>% filter(base_pair_location >55000000 & base_pair_location < 56000000)
+
+#remove the full chromosome data as it uses a lot of memory
+rm(LDL_chr1_df)
+
+
+#now lets plot the effect of the key variant on the INDICATION using the ggplot2 function
+
+
+
+```
+
+
+```{r plot, echo = FALSE, include=FALSE, eval=TRUE}
+#First locus zoom plot 
+#but this is a little boring, lets plot the whole region add title and axes labels , try giving AI your code and a prompt to improve it
+#we first need to convert the p value to a more sensible, plottable number. we do this with the "-log 10" conversion
+
+```
+
+
+**The plot below shows the PCSK9 gene region and how variants in it are associated with LDL cholesterol levels**
+*We can see that there is a very strong association between variants in and around the PCSK9 gene and LDL cholesterol levels*
+Data is from the publication by [Graham et al](https://www.nature.com/articles/s41586-021-04064-3)
+```{r plot2, echo = FALSE, include=TRUE, eval=TRUE}
+#code to augment the locus zoom plot with a labelled symbol to represent the gene
+
+
+
+```
+
+*Conclusion: what is my conclusion ?*
+
