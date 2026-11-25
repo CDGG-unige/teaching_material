@@ -21,15 +21,16 @@ output:
 ---
 
 
-```{r setup, echo=FALSE, eval= TRUE, include=FALSE}
+```{r setup, echo=FALSE, eval= FALSE, include=FALSE}
 #first install and load my dependencies, these are the additional code libraries that help us run functions and code in R.
-
 
 knitr::opts_chunk$set(echo = TRUE)
 
 # Package management is handled by renv (see renv.lock).
 # First time on a new machine: run renv::restore() in the Console.
 
+install.packages("gtsummary")
+install.packages("patchwork")
 library(tidyverse)   # loads dplyr, ggplot2, tidyr, readr, purrr, etc.
 library(data.table)
 library(knitr)
